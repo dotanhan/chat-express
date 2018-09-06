@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <input id="name_" type="text" placeholder="You're name"><button id="change_name">OK</button>
+    <div style="width: 300px;height: 400px;">
+      <div id="chat_box" style="width: 100%;height: 80%;border: solid black 2px;"></div>
+      <input id="mgs_input" style="width: 80%" ><button onclick="submit()" style="float: right;">Send</button>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        var socket = io('localhost:3000');
+
+        socket.on('send', function (mgs) {
+          console.log(mgs);
+        });
+
+        function submit(){
+            var mgs = $('#mgs_input').val();
+            // var data = JSON.stringify([{username : name, content : mgs}]);
+            // console.log(data);
+            socket.emit('sendMessage',mgs);
+        }
+
+        $('#change_name').click(function () {
+            var name = $('#name_').val();
+            socket.emit('newName', name);
+        });
+
+        socket.on('getMessage', function (data) {
+            console.log(data);
+            $('#chat_box').append('<p>'+data.username+': '+data.content+'</p>');
+        });
+
+
+    </script>
+  </body>
+</html>
